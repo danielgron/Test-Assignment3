@@ -11,6 +11,7 @@ import dto.Employee;
 import dto.EmployeeCreation;
 import integration.ContainerizedDbIntegrationTest;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import servicelayer.booking.BookingService;
@@ -29,28 +30,30 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class CreateBookingTest extends ContainerizedDbIntegrationTest {
+public class ServiceLayerCreateBookingTest extends ContainerizedDbIntegrationTest {
 
     private BookingService svc;
     private CustomerStorage customerStorage;
     private BookingStorage bookingStorage;
     private EmployeeStorage employeeStorage;
 
-    @BeforeAll
+    @BeforeEach
     public void setup() {
         runMigration(4);
 
         employeeStorage = new EmployeeStorageImpl(getConnectionString(), "root", getDbPassword());
         customerStorage = new CustomerStorageImpl(getConnectionString(), "root", getDbPassword());
         bookingStorage = new BookingStorageImpl(getConnectionString(), "root", getDbPassword());
-        svc = new BookingServiceImpl(bookingStorage, mock(SmsService.class));
+        var smsMock = mock(SmsService.class);
+
+        svc = new BookingServiceImpl(bookingStorage, customerStorage, smsMock);
     }
 
     @Test
     public void shouldCreateBooking() throws SQLException, BookingServiceException {
         // Arrange
         employeeStorage.createEmployee(new EmployeeCreation("Adam", "Bo", null));
-        customerStorage.createCustomer(new CustomerCreation("Bob", "Chaplin", null));
+        customerStorage.createCustomer(new CustomerCreation("Bob", "Chaplin", "12345678"));
         var id = svc.createBooking(1,1 , new Date(123456789L), new Time(123456789L), new Time(123456789L));
 
         // Act

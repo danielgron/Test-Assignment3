@@ -4,22 +4,25 @@ import datalayer.booking.BookingStorage;
 import datalayer.customer.CustomerStorage;
 import dto.Customer;
 import dto.SmsMessage;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mockito;
 import servicelayer.booking.BookingService;
 import servicelayer.booking.BookingServiceException;
 import servicelayer.booking.BookingServiceImpl;
 import servicelayer.notifications.SmsService;
 
-import java.sql.SQLException;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.sql.Time;
 
 import static org.mockito.Mockito.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Tag("unit")
-public class CreateBookingTest {
+public class GetBookingForCustomerTest {
 
     // SUT (System Under Test)
     private BookingService bookingService;
@@ -85,6 +88,7 @@ public class CreateBookingTest {
 
         bookingService.createBooking(custId, empId, date, start, end);
 
-        verify(smsServiceMock, times(1)).sendSms(new SmsMessage("12345678", "Booking created"));
+        verify(smsServiceMock, times(1))
+                .sendSms(new SmsMessage("12345678","Booking created"));
     }
 }

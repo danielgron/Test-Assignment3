@@ -16,9 +16,11 @@ public class BookingServiceImpl implements BookingService {
 
     private final SmsService smsService;
     private BookingStorage bookingStorage;
+    private CustomerStorage customerStorage;
 
-    public BookingServiceImpl(BookingStorage bookingStorage, SmsService smsService) {
+    public BookingServiceImpl(BookingStorage bookingStorage, CustomerStorage customerStorage, SmsService smsService) {
         this.bookingStorage = bookingStorage;
+        this.customerStorage = customerStorage;
         this.smsService = smsService;
     }
 
@@ -27,7 +29,13 @@ public class BookingServiceImpl implements BookingService {
     public int createBooking(int customerId, int employeeId, Date date, Time start, Time end) throws BookingServiceException {
         try {
             var bookingId = bookingStorage.createBooking(new BookingCreation(customerId,employeeId,date,start,end));
-            smsService.sendSms(new SmsMessage("","Booking created"));
+            var customer = customerStorage.getCustomerWithId(customerId);
+
+            if (customer == null)
+                throw new BookingServiceException("No customer with id " + customerId + " exists");
+
+            var phoneNumber = customerStorage.getCustomerWithId(customerId).getPhone();
+            smsService.sendSms(new SmsMessage(phoneNumber, "Booking created"));
             return bookingId;
         } catch (SQLException throwables) {
             throw new BookingServiceException(throwables.getMessage());
@@ -35,13 +43,22 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Collection<Booking> getBookingsForCustomer(int customerId) {
-        return null;
+    public Collection<Booking> getBookingsForCustomer(int customerId) throws BookingServiceException {
+        try {
+            return bookingStorage.getBookingsForCustomer(customerId);
+        } catch (SQLException throwables) {
+            throw new BookingServiceException(throwables.getMessage());
+        }
     }
 
     @Override
-    public Collection<Booking> getBookingsForEmployee(int employeeId) {
-        return null;
+    public Collection<Booking> getBookingsForEmployee(int employeeId) throws BookingServiceException {
+        try {
+            return bookingStorage.getBookingsForEmployee(employeeId);
+
+        } catch (SQLException throwables) {
+            throw new BookingServiceException(throwables.getMessage());
+        }
     }
 
     @Override

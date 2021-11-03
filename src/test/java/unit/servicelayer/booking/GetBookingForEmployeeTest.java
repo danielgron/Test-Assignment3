@@ -4,22 +4,25 @@ import datalayer.booking.BookingStorage;
 import datalayer.customer.CustomerStorage;
 import dto.Customer;
 import dto.SmsMessage;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mockito;
 import servicelayer.booking.BookingService;
 import servicelayer.booking.BookingServiceException;
 import servicelayer.booking.BookingServiceImpl;
 import servicelayer.notifications.SmsService;
 
-import java.sql.SQLException;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.sql.Time;
 
 import static org.mockito.Mockito.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Tag("unit")
-public class CreateBookingTest {
+public class GetBookingForEmployeeTest {
 
     // SUT (System Under Test)
     private BookingService bookingService;
@@ -35,7 +38,7 @@ public class CreateBookingTest {
 
 
     @BeforeEach
-    public void beforeEach(){
+    public void beforeEach() throws BookingServiceException {
         bookingStorageMock = mock(BookingStorage.class);
         customerStorageMock = mock(CustomerStorage.class);
 
@@ -49,42 +52,18 @@ public class CreateBookingTest {
 
         smsServiceMock = mock(SmsService.class);
         bookingService = new BookingServiceImpl(bookingStorageMock, customerStorageMock, smsServiceMock);
+
     }
 
     @Test
-    public void mustCallStorageWhenCreatingBooking() throws BookingServiceException, SQLException {
+    public void mustGetBookingWhenExists() throws BookingServiceException, SQLException {
         // Arrange
         // Act
-        var custId = 1;
-        var empId = 1;
-        var date = new Date(123456789l);
-        var start = new Time(123456789l);
-        var end = new Time(123456789l);
+        bookingService.getBookingsForEmployee(2);
 
-        bookingService.createBooking(custId, empId, date, start, end);
-
-        // Assert
-        // Can be read like: verify that storageMock was called 1 time on the method
-        //   'createCustomer' with an argument whose 'firstname' == firstName and
-        //   whose 'lastname' == lastName
         verify(bookingStorageMock, times(1))
-                .createBooking(
-                        argThat(x -> x.getEmployeeId()== empId &&
-                                x.getCustomerId() == custId));
-    }
-
-    @Test
-    public void mustCallSMSServiceWhenCreatingBooking() throws BookingServiceException, SQLException {
-        // Arrange
-        // Act
-        var custId = 1;
-        var empId = 1;
-        var date = new Date(123456789l);
-        var start = new Time(123456789l);
-        var end = new Time(123456789l);
-
-        bookingService.createBooking(custId, empId, date, start, end);
-
-        verify(smsServiceMock, times(1)).sendSms(new SmsMessage("12345678", "Booking created"));
+                .getBookingsForEmployee(
+                        intThat(x -> x == 2)
+                );
     }
 }

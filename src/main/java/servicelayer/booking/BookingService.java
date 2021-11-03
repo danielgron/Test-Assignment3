@@ -11,7 +11,7 @@ import java.sql.Date;
 
 public interface BookingService {
     int createBooking(int customerId, int employeeId, Date date, Time start, Time end) throws BookingServiceException;
-    Collection<Booking> getBookingsForCustomer(int customerId);
-    Collection<Booking> getBookingsForEmployee(int employeeId);
+    Collection<Booking> getBookingsForCustomer(int customerId) throws BookingServiceException;
+    Collection<Booking> getBookingsForEmployee(int employeeId) throws BookingServiceException;
     Collection<Booking> getAllBookings() throws BookingServiceException;
 }
