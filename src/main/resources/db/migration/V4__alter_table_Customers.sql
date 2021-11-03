@@ -1,2 +1,2 @@
 alter table Customers
-ADD phone varchar(31);
+ADD COLUMN phone varchar(31);

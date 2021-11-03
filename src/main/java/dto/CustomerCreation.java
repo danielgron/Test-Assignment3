@@ -8,11 +8,15 @@ public class CustomerCreation {
     public String getLastname() {
         return lastname;
     }
+    public String getPhone() {
+        return phone;
+    }
 
-    public final String firstname, lastname;
+    public final String firstname, lastname, phone;
 
-    public CustomerCreation(String firstname, String lastname) {
+    public CustomerCreation(String firstname, String lastname, String phone) {
         this.firstname = firstname;
         this.lastname = lastname;
+        this.phone = phone;
     }
 }

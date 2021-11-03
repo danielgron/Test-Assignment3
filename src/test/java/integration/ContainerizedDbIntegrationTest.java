@@ -13,10 +13,14 @@ public class ContainerizedDbIntegrationTest {
     public static MySQLContainer mysql;
 
     static {
-         mysql = (MySQLContainer) new MySQLContainer(DockerImageName.parse("mysql"))
+         initMySql();
+    }
+
+    private static void initMySql(){
+        mysql = (MySQLContainer) new MySQLContainer(DockerImageName.parse("mysql"))
                 .withPassword(PASSWORD)
                 .withExposedPorts(PORT);
-         mysql.start();
+        mysql.start();
     }
 
     protected String getDbPassword() {
@@ -36,6 +40,8 @@ public class ContainerizedDbIntegrationTest {
     }
 
     protected void runMigration(double level) {
+        initMySql();
+
         String url = getDbUrl();
         String db = getDb();
         Flyway flyway = new Flyway(

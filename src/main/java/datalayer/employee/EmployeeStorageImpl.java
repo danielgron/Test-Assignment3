@@ -1,5 +1,6 @@
 package datalayer.employee;
 
+import dto.Booking;
 import dto.Customer;
 import dto.Employee;
 import dto.EmployeeCreation;
@@ -69,6 +70,26 @@ public class EmployeeStorageImpl implements EmployeeStorage {
 
     @Override
     public Collection<Employee> getEmployeeWithId(int employeeId) throws SQLException{
-        throw new SQLException("No SQL here yet");
+        var results = new ArrayList<Employee>();
+
+        var sql = "select ID, firstname, lastname, birthdate from Employees where ID = ?";
+        try (var con = getConnection();
+             var stmt = con.prepareStatement(sql)) {
+            stmt.setInt(1, employeeId);
+
+            try (var resultSet = stmt.executeQuery()) {
+                while (resultSet.next()) {
+                    int id = resultSet.getInt("ID");
+                    String firstname = resultSet.getString("firstname");
+                    String lastname = resultSet.getString("lastname");
+                    Date date = resultSet.getDate("birthdate");
+
+                    Employee e = new Employee(id, firstname, lastname, date);
+                    results.add(e);
+                }
+
+            }
+            return results;
+        }
     }
 }

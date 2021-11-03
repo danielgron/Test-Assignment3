@@ -23,7 +23,7 @@ public class SomeOtherIntegrationTest extends ContainerizedDbIntegrationTest {
 
     @BeforeAll
     public void setup() {
-        runMigration(3);
+        runMigration(4);
 
         storage = new CustomerStorageImpl(getConnectionString(), "root", getDbPassword());
         svc = new CustomerServiceImpl(storage);
@@ -32,7 +32,7 @@ public class SomeOtherIntegrationTest extends ContainerizedDbIntegrationTest {
     @Test
     public void Stuff() throws CustomerServiceException, SQLException {
         // Arrange
-        var id = svc.createCustomer("schmeep", "schmoop", Date.valueOf("1987-10-07"));
+        var id = svc.createCustomer("schmeep", "schmoop", Date.valueOf("1987-10-07"), null);
 
         // Act
         var c = svc.getCustomerById(id);

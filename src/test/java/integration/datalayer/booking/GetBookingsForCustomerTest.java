@@ -7,7 +7,6 @@ import datalayer.customer.CustomerStorage;
 import datalayer.customer.CustomerStorageImpl;
 import datalayer.employee.EmployeeStorage;
 import datalayer.employee.EmployeeStorageImpl;
-import dto.Booking;
 import dto.BookingCreation;
 import dto.CustomerCreation;
 import dto.EmployeeCreation;
@@ -17,12 +16,10 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
+import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Time;
-import java.time.LocalTime;
-import java.time.temporal.TemporalField;
 import java.util.Calendar;
-import java.sql.Date;
 import java.util.GregorianCalendar;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Tag("integration")
-class CreateBookingTest extends ContainerizedDbIntegrationTest {
+class GetBookingsForCustomerTest extends ContainerizedDbIntegrationTest {
     private BookingStorage bookingStorage;
     private CustomerStorage customerStorage;
     private EmployeeStorage employeeStorage;
@@ -64,6 +61,7 @@ class CreateBookingTest extends ContainerizedDbIntegrationTest {
     }
 
     private void addFakeCustomers(int numCustomers) throws SQLException {
+        System.out.println("Adding "+ numCustomers + " customers");
         Faker faker = new Faker();
         for (int i = 0; i < numCustomers; i++) {
             CustomerCreation c = new CustomerCreation(faker.name().firstName(), faker.name().lastName(), faker.phoneNumber().phoneNumber());
@@ -72,6 +70,7 @@ class CreateBookingTest extends ContainerizedDbIntegrationTest {
     }
 
     private void addFakeEmployees(int numEmployees) throws SQLException {
+        System.out.println("Adding "+ numEmployees + " employees");
         Faker faker = new Faker();
         for (int i = 0; i < numEmployees; i++) {
             Date date = new Date(new GregorianCalendar(2021, Calendar.OCTOBER, 20).getTimeInMillis());
@@ -86,46 +85,20 @@ class CreateBookingTest extends ContainerizedDbIntegrationTest {
             Time sqlTime1 = Time.valueOf("10:00:00");
             Time sqlTime2 = Time.valueOf("12:00:00");
             Date date = new Date(new GregorianCalendar(2021, Calendar.OCTOBER, 20).getTimeInMillis());
-            BookingCreation b = new BookingCreation(i + 1, i + 1, date, sqlTime1, sqlTime2);
+            BookingCreation b = new BookingCreation(1, i + 1, date, sqlTime1, sqlTime2);
             bookingStorage.createBooking(b);
         }
 
     }
 
     @Test
-    public void mustSaveCustomerInDatabaseWhenCallingCreateCustomer() throws SQLException {
+    public void mustReturnBookingsForCustomer() throws SQLException {
         // Arrange
         // Act
-        Time sqlTime1 = Time.valueOf("10:00:00");
-        Time sqlTime2 = Time.valueOf("12:00:00");
-        Date date = new Date(new GregorianCalendar(2021, Calendar.OCTOBER, 20).getTimeInMillis());
-        BookingCreation b = new BookingCreation(1, 1, date, sqlTime1, sqlTime2);
-        bookingStorage.createBooking(b);
 
         // Assert
-        var customers = bookingStorage.getAllBookings();
-        assertTrue(
-                customers.stream().anyMatch(x ->
-                        x.getCustomerId() == 1 &&
-                        x.getEmployeeId() == 1));
-    }
+        var bookings = bookingStorage.getBookingsForCustomer(1);
 
-    @Test
-    public void mustReturnLatestId() throws SQLException {
-        // Arrange
-        // Act
-        var id1 = bookingStorage.createBooking(createBooking());
-        var id2 = bookingStorage.createBooking(createBooking());
-
-        // Assert
-        assertEquals(1, id2 - id1);
-    }
-
-    private BookingCreation createBooking(){
-        Time sqlTime1 = Time.valueOf("10:00:00");
-        Time sqlTime2 = Time.valueOf("12:00:00");
-        Date date = new Date(new GregorianCalendar(2021, Calendar.OCTOBER, 20).getTimeInMillis());
-        BookingCreation b = new BookingCreation(1, 1, date, sqlTime1, sqlTime2);
-        return b;
+        assertEquals(10, bookings.size());
     }
 }

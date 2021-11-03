@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface BookingStorage {
     //public Booking getBookingWithId(int bookingId) throws SQLException;
-    public Collection<Booking> getBookingsForCustomer() throws SQLException;
+    public Collection<Booking> getBookingsForCustomer(int customerId) throws SQLException;
     public Collection<Booking> getAllBookings() throws SQLException;
     public int createBooking(BookingCreation booking) throws SQLException;
 }

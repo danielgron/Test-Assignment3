@@ -23,7 +23,7 @@ class SvcCreateCustomerTest extends ContainerizedDbIntegrationTest {
 
     @BeforeAll
     public void setup() {
-        runMigration(3);
+        runMigration(4);
         storage = new CustomerStorageImpl(getConnectionString(),"root", getDbPassword());
         svc = new CustomerServiceImpl(storage);
     }
@@ -34,7 +34,7 @@ class SvcCreateCustomerTest extends ContainerizedDbIntegrationTest {
         var firstName = "John";
         var lastName = "Johnson";
         var bday = new Date(1239821l);
-        int id = svc.createCustomer(firstName, lastName, bday);
+        int id = svc.createCustomer(firstName, lastName, bday, null);
 
         // Act
         var createdCustomer = storage.getCustomerWithId(id);

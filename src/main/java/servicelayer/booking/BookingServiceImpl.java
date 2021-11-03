@@ -2,12 +2,10 @@ package servicelayer.booking;
 
 import datalayer.booking.BookingStorage;
 import datalayer.customer.CustomerStorage;
-import dto.Booking;
-import dto.BookingCreation;
-import dto.Customer;
-import dto.CustomerCreation;
+import dto.*;
 import servicelayer.customer.CustomerService;
 import servicelayer.customer.CustomerServiceException;
+import servicelayer.notifications.SmsService;
 
 import java.sql.SQLException;
 import java.sql.Time;
@@ -16,17 +14,21 @@ import java.sql.Date;
 
 public class BookingServiceImpl implements BookingService {
 
+    private final SmsService smsService;
     private BookingStorage bookingStorage;
 
-    public BookingServiceImpl(CustomerStorage customerStorage) {
+    public BookingServiceImpl(BookingStorage bookingStorage, SmsService smsService) {
         this.bookingStorage = bookingStorage;
+        this.smsService = smsService;
     }
 
 
     @Override
     public int createBooking(int customerId, int employeeId, Date date, Time start, Time end) throws BookingServiceException {
         try {
-            return bookingStorage.createBooking(new BookingCreation(customerId,employeeId,date,start,end));
+            var bookingId = bookingStorage.createBooking(new BookingCreation(customerId,employeeId,date,start,end));
+            smsService.sendSms(new SmsMessage("","Booking created"));
+            return bookingId;
         } catch (SQLException throwables) {
             throw new BookingServiceException(throwables.getMessage());
         }
@@ -38,7 +40,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Collection<Booking> getBookingsForEmployeee(int employeeId) {
+    public Collection<Booking> getBookingsForEmployee(int employeeId) {
         return null;
     }
 
