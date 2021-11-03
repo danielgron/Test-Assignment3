@@ -3,19 +3,30 @@
 
 Tests has only been run in Intelij, no guarantees anywhere else.
 
-Notes on changes made:
+ ## Notes on changes made:
 
 testcontainers updated to 1.6.2 in order to be used with newer releases of docker.
 
 The provided way of instantiating only one db for integration tests not very smart, as the state of the db is not deterministic for each integration test, but rather decided by the tests running beforehand.
+
 I have changed the integrationtests to do a clean db as part of the migration.
+
+
 This means each test run will take longer, and ideally it would be handled with a script for truncating tables.
 
 For the scope of the assignment this fix suited me better.
 
 
+Running it normally will have limited functionality as it is clearly stated that the sms service should not be implemented, and thus bookings will fail as the dependency is not there.
 
-Requirements:
+
+The database for a "production" db will be created by running docker-compose up from the root of the project.
+This has a volume mapped to the folder with migration scripts that will automatically be called on the first run.
+
+______________
+
+
+# Requirements:
 ## R1: It must be possible to create customers, employees and bookings.
 
 done
