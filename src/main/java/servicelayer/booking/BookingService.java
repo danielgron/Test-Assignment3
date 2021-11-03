@@ -7,7 +7,7 @@ import servicelayer.customer.CustomerServiceException;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.util.Collection;
-import java.util.Date;
+import java.sql.Date;
 
 public interface BookingService {
     int createBooking(int customerId, int employeeId, Date date, Time start, Time end) throws BookingServiceException;

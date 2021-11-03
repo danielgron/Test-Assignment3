@@ -12,7 +12,7 @@ import servicelayer.customer.CustomerServiceException;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.util.Collection;
-import java.util.Date;
+import java.sql.Date;
 
 public class BookingServiceImpl implements BookingService {
 
@@ -26,7 +26,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public int createBooking(int customerId, int employeeId, Date date, Time start, Time end) throws BookingServiceException {
         try {
-            return bookingStorage.createBooking(new Booking());
+            return bookingStorage.createBooking(new BookingCreation(customerId,employeeId,date,start,end));
         } catch (SQLException throwables) {
             throw new BookingServiceException(throwables.getMessage());
         }

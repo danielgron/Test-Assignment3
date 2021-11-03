@@ -25,7 +25,7 @@ class CreateCustomerTest extends ContainerizedDbIntegrationTest {
 
     @BeforeAll
     public void Setup() throws SQLException {
-        runMigration(2);
+        runMigration(4);
 
         customerStorage = new CustomerStorageImpl(getConnectionString(), "root", getDbPassword());
 
@@ -41,7 +41,6 @@ class CreateCustomerTest extends ContainerizedDbIntegrationTest {
             CustomerCreation c = new CustomerCreation(faker.name().firstName(), faker.name().lastName());
             customerStorage.createCustomer(c);
         }
-
     }
 
     @Test
